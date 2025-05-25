@@ -47,7 +47,8 @@ export const initSocket = (server: NetServer) => {
         sender: "System",
         timestamp: new Date(),
       };
-      socket.emit('message', confirmationMessage);
+      roomMessages[roomId].push(confirmationMessage);
+      io.to(roomId).emit('message', confirmationMessage);
     });
 
     socket.on('disconnect', () => {
