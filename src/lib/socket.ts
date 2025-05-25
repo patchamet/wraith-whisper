@@ -13,10 +13,11 @@ export const initSocket = (server: NetServer) => {
   const roomMessages: { [key: string]: ChatMessage[] } = {};
 
   io.on('connection', (socket) => {
-    console.log('Client connected');
+    console.log('Client connected', socket.id);
     
     socket.on('join_room', (roomId: string) => {
       socket.join(roomId);
+      console.log('Client', socket.id, 'joined room', roomId);
       if (!roomMessages[roomId]) {
         roomMessages[roomId] = [];
       }

@@ -4,7 +4,7 @@ import next from 'next';
 import { initSocket } from './lib/socket';
 
 const dev = process.env.NODE_ENV !== 'production';
-const app = next({ dev });
+const app = next({ dev, turbopack: true });
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
