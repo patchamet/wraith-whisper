@@ -6,10 +6,12 @@ import { useSearchParams } from 'next/navigation';
 
 export const Chat = () => {
   const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const searchParams = useSearchParams();
   const roomId = searchParams.get('roomId') || 'default';
   const { messages, sendMessage } = useSocket(roomId);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -17,11 +19,21 @@ export const Chat = () => {
 
   useEffect(() => {
     scrollToBottom();
+    inputRef.current?.focus();
+  }, [messages]);
+
+  useEffect(() => {
+    // Check if the last message is from the system
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage?.sender === 'System') {
+      setIsLoading(false);
+    }
   }, [messages]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim()) {
+      setIsLoading(true);
       sendMessage(message);
       setMessage('');
     }
@@ -34,7 +46,7 @@ export const Chat = () => {
           <div
             key={msg.id}
             className={`mb-2 p-2 rounded max-w-[80%] ${
-              msg.sender === 'System' ? 'ml-0 bg-stone-900' : 'ml-auto bg-slate-900'
+              msg.sender === 'System' ? 'ml-0 bg-zinc-900' : 'ml-auto bg-slate-900'
             }`}
           >
             <div className="font-bold">{msg.sender}</div>
@@ -49,17 +61,26 @@ export const Chat = () => {
 
       <form onSubmit={handleSubmit} className="flex gap-2">
         <input
+          ref={inputRef}
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Type a message..."
-          className="flex-1 p-2 border rounded"
+          placeholder={isLoading ? "Waiting for response..." : "Type a message..."}
+          disabled={isLoading}
+          className={`flex-1 p-2 border rounded ${
+            isLoading ? 'bg-zinc-900 cursor-not-allowed' : ''
+          }`}
         />
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          disabled={isLoading}
+          className={`px-4 py-2 rounded ${
+            isLoading
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-blue-500 hover:bg-blue-600'
+          } text-white`}
         >
-          Send
+          {isLoading ? 'Sending...' : 'Send'}
         </button>
       </form>
     </div>
