@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useSocket } from '@/hooks/useSocket';
 import { useSearchParams } from 'next/navigation';
 
@@ -9,6 +9,16 @@ export const Chat = () => {
   const searchParams = useSearchParams();
   const roomId = searchParams.get('roomId') || 'default';
   const { messages, sendMessage } = useSocket(roomId);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim()) {
@@ -34,6 +44,7 @@ export const Chat = () => {
             </div>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
 
       <form onSubmit={handleSubmit} className="flex gap-2">
