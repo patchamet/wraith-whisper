@@ -30,7 +30,7 @@ export const initSocket = (server: NetServer) => {
       const newMessage: ChatMessage = {
         id: Math.random().toString(36).substring(7),
         content: message.content,
-        sender: 'Server',
+        sender: message.sender,
         timestamp: new Date(),
       };
 
