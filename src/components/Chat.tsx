@@ -40,13 +40,15 @@ export const Chat = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
-      <div className="h-96 overflow-y-auto border rounded p-4 mb-4">
+    <div className="max-w-4xl mx-auto p-4">
+      <div className="h-140 w-4xl overflow-y-auto border rounded p-4 mb-4">
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className={`mb-2 p-2 rounded max-w-[80%] ${
-              msg.sender === 'System' ? 'ml-0 bg-zinc-900' : 'ml-auto bg-slate-900'
+            className={`mb-2 p-2 rounded ${
+              msg.sender === 'System'
+                ? 'ml-0 bg-zinc-900 max-w-[100%]' 
+                : 'ml-auto bg-slate-900 max-w-[60%]'
             }`}
           >
             <div className="font-bold">{msg.sender}</div>
@@ -59,7 +61,7 @@ export const Chat = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={handleSubmit} className="flex gap-2">
+      <form onSubmit={handleSubmit} className="flex gap-2 w-4xl">
         <input
           ref={inputRef}
           type="text"
