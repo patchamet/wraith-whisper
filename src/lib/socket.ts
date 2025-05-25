@@ -40,15 +40,17 @@ export const initSocket = (server: NetServer) => {
       roomMessages[roomId].push(newMessage);
       io.to(roomId).emit('message', newMessage);
       
-      // Send confirmation message back to the client
-      const confirmationMessage: ChatMessage = {
-        id: Math.random().toString(36).substring(7),
-        content: `Received - ${newMessage.content}`,
-        sender: "System",
-        timestamp: new Date(),
-      };
-      roomMessages[roomId].push(confirmationMessage);
-      io.to(roomId).emit('message', confirmationMessage);
+      // Send confirmation message back to the client after delay
+      setTimeout(() => {
+        const confirmationMessage: ChatMessage = {
+          id: Math.random().toString(36).substring(7),
+          content: `Received - ${newMessage.content}`,
+          sender: "System", 
+          timestamp: new Date(),
+        };
+        roomMessages[roomId].push(confirmationMessage);
+        io.to(roomId).emit('message', confirmationMessage);
+      }, 1000); // 1 second delay
     });
 
     socket.on('disconnect', () => {
