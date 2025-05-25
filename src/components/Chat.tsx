@@ -48,7 +48,7 @@ export const Chat = () => {
             className={`mb-2 p-2 rounded ${
               msg.sender === 'System'
                 ? 'ml-0 bg-zinc-900 max-w-[100%]' 
-                : 'ml-auto bg-slate-900 max-w-[60%]'
+                : 'ml-auto bg-slate-900 max-w-[50%]'
             }`}
           >
             <div className="font-bold">{msg.sender}</div>
