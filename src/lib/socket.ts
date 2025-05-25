@@ -10,21 +10,39 @@ export const initSocket = (server: NetServer) => {
     },
   });
 
-  const messages: ChatMessage[] = [];
+  const roomMessages: { [key: string]: ChatMessage[] } = {};
 
   io.on('connection', (socket) => {
     console.log('Client connected');
-    socket.emit('messages', messages);
+    
+    socket.on('join_room', (roomId: string) => {
+      socket.join(roomId);
+      if (!roomMessages[roomId]) {
+        roomMessages[roomId] = [];
+      }
+      socket.emit('messages', roomMessages[roomId]);
+    });
 
     socket.on('message', (message) => {
+      const roomId = Array.from(socket.rooms)[1]; // Get the room ID (first room is socket's own room)
+      if (!roomId) return;
+
       const newMessage: ChatMessage = {
         id: Math.random().toString(36).substring(7),
         content: message.content,
-        sender: message.sender,
+        sender: 'Server',
         timestamp: new Date(),
       };
-      messages.push(newMessage);
-      io.emit('message', newMessage);
+
+      if (!roomMessages[roomId]) {
+        roomMessages[roomId] = [];
+      }
+      roomMessages[roomId].push(newMessage);
+      io.to(roomId).emit('message', newMessage);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Client disconnected');
     });
   });
 

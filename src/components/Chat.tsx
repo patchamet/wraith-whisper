@@ -2,41 +2,28 @@
 
 import { useState } from 'react';
 import { useSocket } from '@/hooks/useSocket';
+import { useSearchParams } from 'next/navigation';
 
 export const Chat = () => {
   const [message, setMessage] = useState('');
-  const [username, setUsername] = useState('');
-  const { messages, sendMessage } = useSocket();
-
+  const searchParams = useSearchParams();
+  const roomId = searchParams.get('roomId') || 'default';
+  const { messages, sendMessage } = useSocket(roomId);
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim() && username.trim()) {
-      sendMessage(message, username);
+    if (message.trim()) {
+      sendMessage(message);
       setMessage('');
     }
   };
 
   return (
     <div className="max-w-2xl mx-auto p-4">
-      <div className="mb-4">
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="Enter your username"
-          className="w-full p-2 border rounded"
-        />
-      </div>
-      
       <div className="h-96 overflow-y-auto border rounded p-4 mb-4">
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className={`mb-2 p-2 rounded ${
-              msg.sender === username
-                ? 'bg-blue-100 ml-auto'
-                : 'bg-gray-100'
-            } max-w-[80%]`}
+            className="mb-2 p-2 rounded bg-gray-100 max-w-[80%]"
           >
             <div className="font-bold">{msg.sender}</div>
             <div>{msg.content}</div>

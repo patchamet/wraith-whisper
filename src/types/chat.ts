@@ -12,4 +12,5 @@ export interface ServerToClientEvents {
 
 export interface ClientToServerEvents {
   message: (message: Omit<ChatMessage, 'id' | 'timestamp'>) => void;
+  join_room: (roomId: string) => void;
 } 

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { ServerToClientEvents, ClientToServerEvents, ChatMessage } from '@/types/chat';
 
-export const useSocket = () => {
+export const useSocket = (roomId: string) => {
   const [socket, setSocket] = useState<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
@@ -13,6 +13,7 @@ export const useSocket = () => {
 
     socketInstance.on('connect', () => {
       console.log('Connected to server');
+      socketInstance.emit('join_room', roomId);
     });
 
     socketInstance.on('message', (message) => {
@@ -28,11 +29,11 @@ export const useSocket = () => {
     return () => {
       socketInstance.disconnect();
     };
-  }, []);
+  }, [roomId]);
 
-  const sendMessage = (content: string, sender: string) => {
+  const sendMessage = (content: string) => {
     if (socket) {
-      socket.emit('message', { content, sender });
+      socket.emit('message', { content, sender: 'Client' });
     }
   };
 
