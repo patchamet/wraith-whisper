@@ -39,6 +39,15 @@ export const initSocket = (server: NetServer) => {
       }
       roomMessages[roomId].push(newMessage);
       io.to(roomId).emit('message', newMessage);
+      
+      // Send confirmation message back to the client
+      const confirmationMessage: ChatMessage = {
+        id: Math.random().toString(36).substring(7),
+        content: `Received - ${newMessage.content}`,
+        sender: "System",
+        timestamp: new Date(),
+      };
+      socket.emit('message', confirmationMessage);
     });
 
     socket.on('disconnect', () => {

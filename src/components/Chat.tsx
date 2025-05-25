@@ -23,7 +23,9 @@ export const Chat = () => {
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className="mb-2 p-2 rounded bg-stone-900 max-w-[80%]"
+            className={`mb-2 p-2 rounded max-w-[80%] ${
+              msg.sender === 'System' ? 'ml-0 bg-stone-900' : 'ml-auto bg-slate-900'
+            }`}
           >
             <div className="font-bold">{msg.sender}</div>
             <div>{msg.content}</div>
