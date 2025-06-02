@@ -57,8 +57,8 @@ export const Chat = () => {
           <div
             key={msg.id}
             className={`mb-2 p-2 rounded ${['system', 'assistant'].includes(msg.role)
-                ? 'ml-0 bg-zinc-900 max-w-[100%]'
-                : 'ml-auto bg-slate-900 max-w-[50%]'
+              ? 'ml-0 bg-zinc-900 max-w-[100%]'
+              : 'ml-auto bg-slate-900 max-w-[50%]'
               }`
             }
           >
@@ -81,7 +81,25 @@ export const Chat = () => {
             placeholder={isLoading ? "Waiting for response..." : "Type a message..."}
             disabled={isLoading}
             maxLength={1000}
-            className={`w-full p-2 border rounded resize-none min-h-[40px] max-h-[120px] ${isLoading ? 'bg-zinc-900 cursor-not-allowed' : ''}`}
+            className={`w-full p-2 border rounded resize-none min-h-[40px] ${isLoading ? 'bg-zinc-900 cursor-not-allowed' : ''}`}
+            rows={1}
+            style={{
+              height: 'auto',
+              overflowY: 'auto',
+            }}
+            onInput={(e) => {
+              const textarea = e.target as HTMLTextAreaElement;
+              const lines = textarea.value.split('\n').length + 1;
+              textarea.rows = 1; // Reset rows
+              textarea.rows = Math.min(lines, 10);
+
+              // Enable vertical scroll if limit exceeded
+              if (lines > 6) {
+                textarea.style.overflowY = 'scroll';
+              } else {
+                textarea.style.overflowY = 'hidden';
+              }
+            }}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
