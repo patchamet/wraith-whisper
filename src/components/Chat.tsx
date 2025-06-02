@@ -73,20 +73,26 @@ export const Chat = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="flex gap-2 w-4xl">
-        <textarea
-          ref={inputRef}
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder={isLoading ? "Waiting for response..." : "Type a message..."}
-          disabled={isLoading}
-          className={`flex-1 p-2 border rounded resize-none min-h-[40px] max-h-[120px] ${isLoading ? 'bg-zinc-900 cursor-not-allowed' : ''}`}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault();
-              handleSubmit(e);
-            }
-          }}
-        />
+        <div className="flex-1 relative">
+          <textarea
+            ref={inputRef}
+            value={message}
+            onChange={(e) => setMessage(e.target.value.slice(0, 1000))}
+            placeholder={isLoading ? "Waiting for response..." : "Type a message..."}
+            disabled={isLoading}
+            maxLength={1000}
+            className={`w-full p-2 border rounded resize-none min-h-[40px] max-h-[120px] ${isLoading ? 'bg-zinc-900 cursor-not-allowed' : ''}`}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSubmit(e);
+              }
+            }}
+          />
+          <div className="absolute bottom-2 right-2 text-xs text-gray-500">
+            {message.length}/1000
+          </div>
+        </div>
         <button
           type="submit"
           disabled={isLoading}
