@@ -13,10 +13,19 @@ const DEFAULT_OPTIONS: ChatCompletionOptions = {
 
 export async function summarizeConversation(messages: ChatMessage[]) {
   try {
+    const currentMessage = messages[messages.length - 1];
+    const historyMessages = messages.slice(0, messages.length - 1);
+
     const summaryPrompt: ChatMessage[] = [
-      { role: 'system', content: 'Summarizer' },
-      { role: 'user', content: 'Summarize this:' },
-      ...messages
+      { 
+        role: 'system', 
+        content: 'You are a conversation summarizer. Your task is to create a concise summary that captures the key points and context of the conversation, making it easy to continue the discussion naturally. Focus on maintaining the conversation flow and important details.'
+      },
+      { 
+        role: 'user', 
+        content: 'Please summarize the following conversation in a way that preserves context and makes it easy to continue the discussion:'
+      },
+      ...historyMessages
     ];
 
     const completion = await openai.chat.completions.create({
@@ -26,15 +35,15 @@ export async function summarizeConversation(messages: ChatMessage[]) {
     });
 
     const summaryMessage = completion.choices[0].message.content;
-
-    return [
+    const results = [
       { 
         role: 'system', 
         content: `Continuing from: ${summaryMessage}`,
-        timestamp: new Date() 
       },
-      ...messages
+      currentMessage
     ]
+  
+    return results; 
   } catch (error) {
     console.error('Error in summarizeConversation:', error);
     throw error;

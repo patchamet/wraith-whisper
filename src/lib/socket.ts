@@ -1,12 +1,27 @@
 import { Server as NetServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import { ServerToClientEvents, ClientToServerEvents, SocketChatMessage, ChatRoom } from '@/types/chat';
-import { createChatCompletion } from '@/utils/openai';
+import { ChatMessage } from '@/types/openai';
+import { createChatCompletion, summarizeConversation } from '@/utils/openai';
 
 const handleAIResponse = async (roomId: string, rooms: { [key: string]: ChatRoom }, io: SocketIOServer<ClientToServerEvents, ServerToClientEvents>) => {
   try {
+    // Summarize conversation if there are more than 10 messages
+    const summaryMessages = rooms[roomId].messages.length > 10
+      ? await summarizeConversation(rooms[roomId].messages)
+      : [] as ChatMessage[];
+    
+    const socketMessages: SocketChatMessage[] = summaryMessages.length > 0
+      ? summaryMessages.map(msg => ({
+        id: Math.random().toString(36).substring(7),
+        role: msg.role,
+        content: msg.content,
+        timestamp: new Date()
+      } as SocketChatMessage))
+      : rooms[roomId].messages;
+
     // Convert room messages to the format expected by createChatCompletion
-    const chatMessages = rooms[roomId].messages.map(msg => ({
+    let chatMessages: ChatMessage[] = socketMessages.map(msg => ({
       role: msg.role,
       content: msg.content
     }));
@@ -21,7 +36,7 @@ const handleAIResponse = async (roomId: string, rooms: { [key: string]: ChatRoom
       content: aiResponse,
       timestamp: new Date(),
     };
-    
+
     rooms[roomId].messages.push(assistantMessage);
     io.to(roomId).emit('message', assistantMessage);
   } catch (error) {
@@ -50,7 +65,7 @@ export const initSocket = (server: NetServer) => {
 
   io.on('connection', (socket) => {
     console.info('Client connected', socket.id);
-    
+
     socket.on('join_room', (roomId: string) => {
       socket.join(roomId);
       console.info('Client', socket.id, 'joined room', roomId);
@@ -87,7 +102,7 @@ export const initSocket = (server: NetServer) => {
       }
       rooms[roomId].messages.push(newMessage);
       io.to(roomId).emit('message', newMessage);
-      
+
       await handleAIResponse(roomId, rooms, io);
     });
 
