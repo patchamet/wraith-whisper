@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSocket } from '@/hooks/useSocket';
 import { useSearchParams } from 'next/navigation';
-import { ChatRoom } from '@/types/chat';
 
 export const Chat = () => {
   const [message, setMessage] = useState('');

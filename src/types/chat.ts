@@ -1,5 +1,4 @@
-
-export interface ChatMessage {
+export interface SocketChatMessage {
   id: string;
   role: 'user' | 'assistant' | 'system';
   content: string;
@@ -8,15 +7,15 @@ export interface ChatMessage {
 
 export interface ChatRoom {
   id: string;
-  messages: ChatMessage[];
+  messages: SocketChatMessage[];
 }
 
 export interface ServerToClientEvents {
-  message: (message: ChatMessage) => void;
-  messages: (messages: ChatMessage[]) => void;
+  message: (message: SocketChatMessage) => void;
+  messages: (messages: SocketChatMessage[]) => void;
 }
 
 export interface ClientToServerEvents {
-  message: (message: Omit<ChatMessage, 'id' | 'timestamp'>) => void;
+  message: (message: Omit<SocketChatMessage, 'id' | 'timestamp'>) => void;
   join_room: (roomId: string) => void;
 } 

@@ -1,6 +1,6 @@
 import { Server as NetServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
-import { ServerToClientEvents, ClientToServerEvents, ChatMessage, ChatRoom } from '@/types/chat';
+import { ServerToClientEvents, ClientToServerEvents, SocketChatMessage, ChatRoom } from '@/types/chat';
 
 export const initSocket = (server: NetServer) => {
   const io = new SocketIOServer<ClientToServerEvents, ServerToClientEvents>(server, {
@@ -36,7 +36,7 @@ export const initSocket = (server: NetServer) => {
       const roomId = Array.from(socket.rooms)[1]; // Get the room ID (first room is socket's own room)
       if (!roomId) return;
 
-      const newMessage: ChatMessage = {
+      const newMessage: SocketChatMessage = {
         id: Math.random().toString(36).substring(7),
         role: 'user',
         content: message.content,
@@ -54,7 +54,7 @@ export const initSocket = (server: NetServer) => {
       
       // Send confirmation message back to the client after delay
       setTimeout(() => {
-        const confirmationMessage: ChatMessage = {
+        const confirmationMessage: SocketChatMessage = {
           id: Math.random().toString(36).substring(7),
           role: 'assistant',
           content: `Received - ${newMessage.content}`,
