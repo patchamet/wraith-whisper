@@ -84,7 +84,7 @@ export const Chat = () => {
             className={`w-full p-2 border rounded resize-none min-h-[40px] ${isLoading ? 'bg-zinc-900 cursor-not-allowed' : ''}`}
             rows={1}
             style={{
-              height: 'auto',
+              height: '100%',
               overflowY: 'auto',
             }}
             onInput={(e) => {
@@ -94,7 +94,7 @@ export const Chat = () => {
               textarea.rows = Math.min(lines, 10);
 
               // Enable vertical scroll if limit exceeded
-              if (lines > 6) {
+              if (lines > 5) {
                 textarea.style.overflowY = 'scroll';
               } else {
                 textarea.style.overflowY = 'hidden';
