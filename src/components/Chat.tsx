@@ -85,7 +85,18 @@ export const Chat = () => {
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                handleSubmit(e);
+                const start = e.currentTarget.selectionStart;
+                const end = e.currentTarget.selectionEnd;
+                const newValue = message.substring(0, start) + '\n' + message.substring(end);
+                setMessage(newValue);
+                // Set cursor position after the new line
+                if (inputRef.current) {
+                  setTimeout(() => {
+                    if (inputRef.current) {
+                      inputRef.current.selectionStart = inputRef.current.selectionEnd = start + 1;
+                    }
+                  }, 0);
+                }
               }
             }}
           />
