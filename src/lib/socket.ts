@@ -21,7 +21,12 @@ export const initSocket = (server: NetServer) => {
       if (!rooms[roomId]) {
         rooms[roomId] = {
           id: roomId,
-          messages: []
+          messages: [{
+            id: Math.random().toString(36).substring(7),
+            role: 'system',
+            content: 'Chatbot for developers',
+            timestamp: new Date()
+          }]
         };
       }
       socket.emit('messages', rooms[roomId].messages);

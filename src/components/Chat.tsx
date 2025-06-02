@@ -57,10 +57,11 @@ export const Chat = () => {
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className={`mb-2 p-2 rounded ${msg.role === 'assistant'
+            className={`mb-2 p-2 rounded ${['system', 'assistant'].includes(msg.role)
                 ? 'ml-0 bg-zinc-900 max-w-[100%]'
                 : 'ml-auto bg-slate-900 max-w-[50%]'
-              }`}
+              }`
+            }
           >
             <div className="font-bold capitalize">{msg.role}</div>
             <div className="whitespace-pre-line">{msg.content}</div>
@@ -91,8 +92,8 @@ export const Chat = () => {
           type="submit"
           disabled={isLoading}
           className={`px-4 py-2 rounded ${isLoading
-              ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-blue-500 hover:bg-blue-600'
+            ? 'bg-gray-400 cursor-not-allowed'
+            : 'bg-blue-500 hover:bg-blue-600'
             } text-white`}
         >
           {isLoading ? 'Sending...' : 'Send'}
