@@ -8,7 +8,7 @@ export const openai = new OpenAI({
 
 // Default options
 const DEFAULT_OPTIONS: ChatCompletionOptions = {
-  model: 'gpt-3.5-turbo',
+  model: 'gpt-4.1-mini',
   temperature: 0.7,
   max_tokens: 1000,
 };
