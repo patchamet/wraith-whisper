@@ -1,8 +1,15 @@
+
 export interface ChatMessage {
   id: string;
+  role: 'user' | 'assistant' | 'system';
   content: string;
   sender: string;
   timestamp: Date;
+}
+
+export interface ChatRoom {
+  id: string;
+  messages: ChatMessage[];
 }
 
 export interface ServerToClientEvents {

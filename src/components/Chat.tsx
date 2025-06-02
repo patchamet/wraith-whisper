@@ -3,13 +3,14 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSocket } from '@/hooks/useSocket';
 import { useSearchParams } from 'next/navigation';
+import { ChatRoom } from '@/types/chat';
 
 export const Chat = () => {
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const searchParams = useSearchParams();
   const roomId = searchParams.get('roomId') || 'default';
-  const { messages, sendMessage } = useSocket(roomId);
+  const { messages, sendMessage, currentRoom } = useSocket(roomId);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -43,7 +44,7 @@ export const Chat = () => {
     <div className="max-w-4xl mx-auto p-4">
       <div className="mb-4 p-2 w-4xl bg-slate-800 rounded text-center">
         <span className="text-sm text-gray-400">Room ID: </span>
-        <span className="font-mono text-blue-400">{roomId}</span>
+        <span className="font-mono text-blue-400">{currentRoom?.id || roomId}</span>
       </div>
       <div className="h-140 w-4xl overflow-y-auto border rounded p-4 mb-4">
         {messages.map((msg) => (

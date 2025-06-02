@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "bun run src/server.ts",
+    "dev": "NODE_ENV=development bun run src/server.ts",
     "build": "next build",
     "start": "NODE_ENV=production bun run src/server.ts",
     "lint": "next lint"

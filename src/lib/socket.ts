@@ -1,6 +1,6 @@
 import { Server as NetServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
-import { ServerToClientEvents, ClientToServerEvents, ChatMessage } from '@/types/chat';
+import { ServerToClientEvents, ClientToServerEvents, ChatMessage, ChatRoom } from '@/types/chat';
 
 export const initSocket = (server: NetServer) => {
   const io = new SocketIOServer<ClientToServerEvents, ServerToClientEvents>(server, {
@@ -10,7 +10,7 @@ export const initSocket = (server: NetServer) => {
     },
   });
 
-  const roomMessages: { [key: string]: ChatMessage[] } = {};
+  const rooms: { [key: string]: ChatRoom } = {};
 
   io.on('connection', (socket) => {
     console.log('Client connected', socket.id);
@@ -18,10 +18,13 @@ export const initSocket = (server: NetServer) => {
     socket.on('join_room', (roomId: string) => {
       socket.join(roomId);
       console.log('Client', socket.id, 'joined room', roomId);
-      if (!roomMessages[roomId]) {
-        roomMessages[roomId] = [];
+      if (!rooms[roomId]) {
+        rooms[roomId] = {
+          id: roomId,
+          messages: []
+        };
       }
-      socket.emit('messages', roomMessages[roomId]);
+      socket.emit('messages', rooms[roomId].messages);
     });
 
     socket.on('message', (message) => {
@@ -32,13 +35,17 @@ export const initSocket = (server: NetServer) => {
         id: Math.random().toString(36).substring(7),
         content: message.content,
         sender: message.sender,
+        role: 'user',
         timestamp: new Date(),
       };
 
-      if (!roomMessages[roomId]) {
-        roomMessages[roomId] = [];
+      if (!rooms[roomId]) {
+        rooms[roomId] = {
+          id: roomId,
+          messages: []
+        };
       }
-      roomMessages[roomId].push(newMessage);
+      rooms[roomId].messages.push(newMessage);
       io.to(roomId).emit('message', newMessage);
       
       // Send confirmation message back to the client after delay
@@ -46,10 +53,11 @@ export const initSocket = (server: NetServer) => {
         const confirmationMessage: ChatMessage = {
           id: Math.random().toString(36).substring(7),
           content: `Received - ${newMessage.content}`,
-          sender: "System", 
+          sender: "System",
+          role: 'system',
           timestamp: new Date(),
         };
-        roomMessages[roomId].push(confirmationMessage);
+        rooms[roomId].messages.push(confirmationMessage);
         io.to(roomId).emit('message', confirmationMessage);
       }, 1000); // 1 second delay
     });
