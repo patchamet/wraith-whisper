@@ -12,7 +12,7 @@ export const Chat = () => {
   const roomId = searchParams.get('roomId') || 'default';
   const { messages, sendMessage, currentRoom } = useSocket(roomId);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -63,7 +63,7 @@ export const Chat = () => {
               }`}
           >
             <div className="font-bold capitalize">{msg.role}</div>
-            <div>{msg.content}</div>
+            <div className="whitespace-pre-line">{msg.content}</div>
             <div className="text-xs text-gray-500">
               {new Date(msg.timestamp).toLocaleTimeString()}
             </div>
@@ -73,15 +73,19 @@ export const Chat = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="flex gap-2 w-4xl">
-        <input
+        <textarea
           ref={inputRef}
-          type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder={isLoading ? "Waiting for response..." : "Type a message..."}
           disabled={isLoading}
-          className={`flex-1 p-2 border rounded ${isLoading ? 'bg-zinc-900 cursor-not-allowed' : ''
-            }`}
+          className={`flex-1 p-2 border rounded resize-none min-h-[40px] max-h-[120px] ${isLoading ? 'bg-zinc-900 cursor-not-allowed' : ''}`}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              handleSubmit(e);
+            }
+          }}
         />
         <button
           type="submit"
