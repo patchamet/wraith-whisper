@@ -57,32 +57,23 @@ export async function createStreamingChatCompletion(
   }
 }
 
-/**
- * Helper function to create a system message
- */
-export function createSystemMessage(content: string): ChatMessage {
-  return {
-    role: 'system',
-    content,
-  };
-}
+export async function summarizeConversation(messages: ChatMessage[]) {
+  try {
+    const summaryPrompt: ChatMessage[] = [
+      { role: 'system', content: 'Summarizer' },
+      { role: 'user', content: 'Summarize this:' },
+      ...messages
+    ];
 
-/**
- * Helper function to create a user message
- */
-export function createUserMessage(content: string): ChatMessage {
-  return {
-    role: 'user',
-    content,
-  };
-}
+    const completion = await openai.chat.completions.create({
+      messages: summaryPrompt,
+      ...DEFAULT_OPTIONS,
+      stream: false,
+    });
 
-/**
- * Helper function to create an assistant message
- */
-export function createAssistantMessage(content: string): ChatMessage {
-  return {
-    role: 'assistant',
-    content,
-  };
-} 
+    return completion.choices[0].message.content;
+  } catch (error) {
+    console.error('Error in summarizeConversation:', error);
+    throw error;
+  }
+}
