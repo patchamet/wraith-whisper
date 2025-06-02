@@ -21,24 +21,31 @@ export const Chat = () => {
   useEffect(() => {
     scrollToBottom();
     inputRef.current?.focus();
+    console.info('Messages updated:', messages);
   }, [messages]);
 
   useEffect(() => {
-    // Check if the last message is from the system
+    // Check if the last message is from the Assistant
     const lastMessage = messages[messages.length - 1];
-    if (lastMessage?.sender === 'System') {
+    if (lastMessage?.role === 'assistant') {
       setIsLoading(false);
+      console.info('Assistant message received, loading state set to false');
     }
   }, [messages]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim()) {
+      console.info('Sending message:', message);
       setIsLoading(true);
       sendMessage(message);
       setMessage('');
     }
   };
+
+  useEffect(() => {
+    console.info('Current room:', currentRoom);
+  }, [currentRoom]);
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -50,13 +57,12 @@ export const Chat = () => {
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className={`mb-2 p-2 rounded ${
-              msg.sender === 'System'
-                ? 'ml-0 bg-zinc-900 max-w-[100%]' 
+            className={`mb-2 p-2 rounded ${msg.role === 'assistant'
+                ? 'ml-0 bg-zinc-900 max-w-[100%]'
                 : 'ml-auto bg-slate-900 max-w-[50%]'
-            }`}
+              }`}
           >
-            <div className="font-bold">{msg.sender}</div>
+            <div className="font-bold capitalize">{msg.role}</div>
             <div>{msg.content}</div>
             <div className="text-xs text-gray-500">
               {new Date(msg.timestamp).toLocaleTimeString()}
@@ -74,18 +80,16 @@ export const Chat = () => {
           onChange={(e) => setMessage(e.target.value)}
           placeholder={isLoading ? "Waiting for response..." : "Type a message..."}
           disabled={isLoading}
-          className={`flex-1 p-2 border rounded ${
-            isLoading ? 'bg-zinc-900 cursor-not-allowed' : ''
-          }`}
+          className={`flex-1 p-2 border rounded ${isLoading ? 'bg-zinc-900 cursor-not-allowed' : ''
+            }`}
         />
         <button
           type="submit"
           disabled={isLoading}
-          className={`px-4 py-2 rounded ${
-            isLoading
+          className={`px-4 py-2 rounded ${isLoading
               ? 'bg-gray-400 cursor-not-allowed'
               : 'bg-blue-500 hover:bg-blue-600'
-          } text-white`}
+            } text-white`}
         >
           {isLoading ? 'Sending...' : 'Send'}
         </button>

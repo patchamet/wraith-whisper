@@ -37,7 +37,7 @@ export const useSocket = (roomId: string) => {
 
   const sendMessage = (content: string) => {
     if (socket) {
-      socket.emit('message', { content, sender: 'Client', role: 'user' });
+      socket.emit('message', { content, role: 'user' });
     }
   };
 

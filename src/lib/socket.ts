@@ -33,9 +33,8 @@ export const initSocket = (server: NetServer) => {
 
       const newMessage: ChatMessage = {
         id: Math.random().toString(36).substring(7),
-        content: message.content,
-        sender: message.sender,
         role: 'user',
+        content: message.content,
         timestamp: new Date(),
       };
 
@@ -52,9 +51,8 @@ export const initSocket = (server: NetServer) => {
       setTimeout(() => {
         const confirmationMessage: ChatMessage = {
           id: Math.random().toString(36).substring(7),
+          role: 'assistant',
           content: `Received - ${newMessage.content}`,
-          sender: "System",
-          role: 'system',
           timestamp: new Date(),
         };
         rooms[roomId].messages.push(confirmationMessage);
