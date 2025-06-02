@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_ENV=development bun run src/server.ts",
+    "start": "NODE_ENV=development dotenv -e .env.development -- bun run src/server.ts",
+    "dev": "NODE_ENV=development dotenv -e .env.development -- bun run src/server.ts",
+    "production": "NODE_ENV=production dotenv -e .env.production -- bun run src/server.ts",
     "build": "next build",
-    "start": "NODE_ENV=production bun run src/server.ts",
     "lint": "next lint"
   },
   "dependencies": {
@@ -24,6 +25,7 @@
     "tailwindcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
-    "@eslint/eslintrc": "^3"
+    "@eslint/eslintrc": "^3",
+    "dotenv-cli": "^7.3.0"
   }
 }

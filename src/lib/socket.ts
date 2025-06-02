@@ -13,11 +13,11 @@ export const initSocket = (server: NetServer) => {
   const rooms: { [key: string]: ChatRoom } = {};
 
   io.on('connection', (socket) => {
-    console.log('Client connected', socket.id);
+    console.info('Client connected', socket.id);
     
     socket.on('join_room', (roomId: string) => {
       socket.join(roomId);
-      console.log('Client', socket.id, 'joined room', roomId);
+      console.info('Client', socket.id, 'joined room', roomId);
       if (!rooms[roomId]) {
         rooms[roomId] = {
           id: roomId,
@@ -61,7 +61,7 @@ export const initSocket = (server: NetServer) => {
     });
 
     socket.on('disconnect', () => {
-      console.log('Client disconnected');
+      console.info('Client disconnected');
     });
   });
 
