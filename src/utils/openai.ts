@@ -25,7 +25,16 @@ export async function summarizeConversation(messages: ChatMessage[]) {
       stream: false,
     });
 
-    return completion.choices[0].message.content;
+    const summaryMessage = completion.choices[0].message.content;
+
+    return [
+      { 
+        role: 'system', 
+        content: `Continuing from: ${summaryMessage}`,
+        timestamp: new Date() 
+      },
+      ...messages
+    ]
   } catch (error) {
     console.error('Error in summarizeConversation:', error);
     throw error;
