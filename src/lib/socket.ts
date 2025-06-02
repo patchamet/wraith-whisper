@@ -37,6 +37,9 @@ const handleAIResponse = async (roomId: string, rooms: { [key: string]: ChatRoom
       timestamp: new Date(),
     };
 
+    // Update the room messages with the new messages
+    rooms[roomId].messages = socketMessages;
+
     rooms[roomId].messages.push(assistantMessage);
     io.to(roomId).emit('message', assistantMessage);
   } catch (error) {
