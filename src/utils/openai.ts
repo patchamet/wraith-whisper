@@ -19,7 +19,12 @@ export async function summarizeConversation(messages: ChatMessage[]) {
     const summaryPrompt: ChatMessage[] = [
       { 
         role: 'system', 
-        content: 'You are a conversation summarizer. Your task is to create a concise summary that captures the key points and context of the conversation, making it easy to continue the discussion naturally. Focus on maintaining the conversation flow and important details.'
+        content: [
+          'You are a conversation summarizer.',
+          'Your task is to create a concise summary that captures the key points and context of the conversation,',
+          'making it easy to continue the discussion naturally.',
+          'Focus on maintaining the conversation flow and important details.'
+        ].join(' ')
       },
       { 
         role: 'user', 
